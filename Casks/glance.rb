@@ -16,14 +16,21 @@ cask "glance" do
 
   # 签名但**未公证**(没有 $99 开发者账号)。Homebrew 用自己下载的文件、通常不带 quarantine
   # 标记,所以正常能开;万一系统还是拦,给一条能直接粘的命令。
+  # 实测(Homebrew 7.0.1,2026-09-16):
+  #   · `brew install --cask` **会**打上 com.apple.quarantine(agent = Homebrew Cask);
+  #   · 已无 `--no-quarantine` 选项,也没有 HOMEBREW_NO_QUARANTINE 环境变量(两者都实测过)。
+  # ⇒ Homebrew 并不能替未公证的 App 绕开 Gatekeeper,首次打开仍需用户动一次手。
+  # 这段 caveats 就是"那次动手"的说明,brew 装完会自动打印。
   caveats <<~EOS
-    Glance is signed but not notarized (no Apple Developer account).
+    Glance is signed but not notarized (no Apple Developer account), and
+    Homebrew marks the download as quarantined, so macOS will refuse the first
+    launch. Do ONE of these once:
 
-    Homebrew DOES add the macOS quarantine flag, so the first launch may be
-    refused by Gatekeeper. Install with this flag to avoid it:
-      brew reinstall --cask --no-quarantine cheney12138/tap/glance
-
-    If it is already installed, either reinstall with the flag above, or run:
       xattr -dr com.apple.quarantine "/Applications/Glance.app"
+
+    or System Settings ▸ Privacy & Security ▸ "Open Anyway".
+
+    After that it opens normally, and Glance updates itself (Sparkle) — its own
+    updates are not quarantined, so you only do this for the first install.
   EOS
 end
