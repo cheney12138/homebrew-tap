@@ -17,8 +17,13 @@ cask "glance" do
   # 签名但**未公证**(没有 $99 开发者账号)。Homebrew 用自己下载的文件、通常不带 quarantine
   # 标记,所以正常能开;万一系统还是拦,给一条能直接粘的命令。
   caveats <<~EOS
-    Glance is signed but not notarized. Homebrew installs it without the macOS
-    quarantine flag, so it should open normally. If macOS still refuses:
+    Glance is signed but not notarized (no Apple Developer account).
+
+    Homebrew DOES add the macOS quarantine flag, so the first launch may be
+    refused by Gatekeeper. Install with this flag to avoid it:
+      brew reinstall --cask --no-quarantine cheney12138/tap/glance
+
+    If it is already installed, either reinstall with the flag above, or run:
       xattr -dr com.apple.quarantine "/Applications/Glance.app"
   EOS
 end
